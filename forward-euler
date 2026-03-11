@@ -1,0 +1,61 @@
+import numpy as np
+
+def forward_euler(f, t0, y0, t_end, h):
+    """
+    Solves dy/dt = f(t, y) using the Forward Euler method.
+    
+    Parameters:
+    f     : Function representing the derivative dy/dt. Must accept (t, y).
+    t0    : Initial time.
+    y0    : Initial value(s). Can be a scalar or a numpy array for systems.
+    t_end : End time for the simulation.
+    h     : Step size.
+    """
+    # Calculate the number of steps
+    N = int(np.ceil((t_end - t0) / h))
+    t = np.linspace(t0, t0 + N*h, N + 1)
+    
+    # Initialize the solution array 'y'
+    # Check if y0 is a single number or a system of equations (array)
+    if isinstance(y0, (int, float)):
+        y = np.zeros(N + 1)
+    else:
+        y0 = np.array(y0)
+        y = np.zeros((N + 1, len(y0)))
+        
+    y[0] = y0
+    
+    # Perform the Euler steps
+    for i in range(N):
+        y[i+1] = y[i] + h * f(t[i], y[i])
+        
+    return t, y
+
+
+
+#  2nd-order differential equation like $y'' - 2y' + y = \sin(t)$, you must convert it to a system of 1st-order equations before plugging it into these algorithms.
+# example below
+
+# Let y1 = y  and  y2 = y'
+# Then:
+# dy1/dt = y2
+# dy2/dt = 2*y2 - y1 + sin(t)
+
+def my_system(t, Y):
+    y1 = Y[0]
+    y2 = Y[1]
+    
+    dy1_dt = y2
+    dy2_dt = 2*y2 - y1 + np.sin(t)
+    
+    # Return as a numpy array
+    return np.array([dy1_dt, dy2_dt])
+
+# Initial conditions: y(0) = 1, y'(0) = 0
+initial_conditions = [1.0, 0.0] 
+
+# Solve using Modified Euler
+t_vals, y_vals = modified_euler(my_system, t0=0, y0=initial_conditions, t_end=10, h=0.01)
+
+# To plot or use just the original function 'y':
+y_original = y_vals[:, 0]
