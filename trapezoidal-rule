@@ -1,0 +1,24 @@
+import numpy as np
+
+def trapezoidal_rule(f, a, b, n):
+    """
+    Approximates the definite integral of f from a to b 
+    using the Composite Trapezoidal Rule.
+    
+    Parameters:
+    f : function to integrate
+    a : lower limit
+    b : upper limit
+    n : number of subintervals (can be odd or even)
+    """
+    h = (b - a) / n
+    x = np.linspace(a, b, n + 1)
+    y = f(x)
+    
+    # Sum the interior points and multiply by 2
+    interior_sum = 2 * np.sum(y[1:-1])
+    
+    # Add the endpoints
+    total = y[0] + interior_sum + y[-1]
+    
+    return (h / 2.0) * total
