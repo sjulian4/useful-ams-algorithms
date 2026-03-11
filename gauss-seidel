@@ -1,0 +1,27 @@
+import numpy as np
+
+
+def gauss_seidel(A, b, x0, tol=1e-6, max_iter=1000):
+    """
+    Solves Ax = b using the Gauss-Seidel iterative method.
+    A must be strictly diagonally dominant or symmetric positive definite to guarantee convergence.
+    """
+    n = len(b)
+    x = np.array(x0, dtype=float)
+    
+    for k in range(max_iter):
+        x_new = np.copy(x)
+        
+        for i in range(n):
+            s1 = np.dot(A[i, :i], x_new[:i])      # Use newly updated values
+            s2 = np.dot(A[i, i+1:], x[i+1:])      # Use old values
+            x_new[i] = (b[i] - s1 - s2) / A[i, i]
+            
+        # Check for convergence
+        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+            return x_new
+            
+        x = x_new
+        
+    print("Warning: Maximum iterations reached without convergence.")
+    return x
